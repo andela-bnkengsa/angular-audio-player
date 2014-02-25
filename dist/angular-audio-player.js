@@ -199,7 +199,11 @@ angular.module('audioPlayer', [])
               if (!self.currentTrack) { self.currentTrack++; } // This is triggered *ONLY* the first time a <source> gets loaded.
               self.duration = self._audioTag.duration;
               self.formatDuration = self._formatTime(self.duration);
-              self.loadPercent = parseInt((self._audioTag.buffered.end(self._audioTag.buffered.length - 1) / self.duration) * 100, 10);
+              // Safari workaround. It seems that on initial load, the buffered length is 0 which causes an exception here.
+              if (self._audioTag.buffered.length > 0)
+              {
+                self.loadPercent = parseInt((self._audioTag.buffered.end(self._audioTag.buffered.length - 1) / self.duration) * 100, 10);
+              }
             });
           },
           playNext = function (evt) {
