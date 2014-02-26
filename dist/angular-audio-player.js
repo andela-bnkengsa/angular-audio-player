@@ -46,6 +46,7 @@ angular.module('audioPlayer', [])
         muted: element[0].muted,
         duration: element[0].duration,
         currentTime: element[0].currentTime,
+        playbackRate: element[0].playbackRate,
 
         // TimeRanges structures
         buffered: element[0].buffered,
@@ -55,6 +56,7 @@ angular.module('audioPlayer', [])
         // formatted properties
         formatDuration: '',
         formatTime: '',
+        formatTimeRemaining: '',
         loadPercent: 0,
 
         // aliases
@@ -145,6 +147,12 @@ angular.module('audioPlayer', [])
           });
         }
       },
+      seek: function(time) {
+        this._audioTag.currentTime = time;
+      },
+      setPlaybackRate: function(speed) {
+        this._audioTag.playbackRate = speed;
+      },
       _addAudioList: function (audioList) {
         var self = this;
         if (angular.isArray(audioList)) {
@@ -180,6 +188,7 @@ angular.module('audioPlayer', [])
             scope.$apply(function () {
               self.currentTime = self.position = self._audioTag.currentTime;
               self.formatTime = self._formatTime(self.currentTime);
+              self.formatTimeRemaining = self._formatTime(self.duration - self.currentTime);
             });
           }),
           updatePlaying = function (isPlaying) {
