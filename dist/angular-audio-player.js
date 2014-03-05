@@ -169,9 +169,9 @@ angular.module('audioPlayer', [])
         this._element.contents().remove();
       },
       _formatTime: function (seconds) {
-        var hours = parseInt(seconds / 3600, 10) % 24,
-            minutes = parseInt(seconds / 60, 10) % 60,
-            secs = parseInt(seconds % 60, 10),
+        var hours = Math.floor(seconds / 3600) % 24,
+            minutes = Math.floor(seconds / 60) % 60,
+            secs = Math.floor(seconds % 60),
             result,
             fragment = (minutes < 10 ? '0' + minutes : minutes) + ':' + (secs  < 10 ? '0' + secs : secs);
         if (hours > 0) {
@@ -187,8 +187,12 @@ angular.module('audioPlayer', [])
           updateTime = throttle(1000, false, function (evt) {
             scope.$apply(function () {
               self.currentTime = self.position = self._audioTag.currentTime;
-              self.formatTime = self._formatTime(self.currentTime);
-              self.formatTimeRemaining = self._formatTime(self.duration - self.currentTime);
+              self.formatTime = self._formatTime(self._audioTag.currentTime);
+              if (self._audioTag.duration && !isNaN(self._audioTag.duration)) {
+                self.formatTimeRemaining = self._formatTime(self._audioTag.duration - self.currentTime);
+              } else {
+                self.formatTimeRemaining = null;
+              }
             });
           }),
           updatePlaying = function (isPlaying) {
